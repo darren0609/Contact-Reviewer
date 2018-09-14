@@ -139,13 +139,13 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	t.Execute(w, struct{}{})
 
 	// Grab credentials so we can use them in displaying form detail going forward
-	res, err := client.Get("https://graph.microsoft.com/v1.0/me")
-	fmt.Println("So far got to this point...")
-	if err != nil {
-		//log.Println("Failed to get user/me:", err)
-		//return
-	}
-	defer res.Body.Close()
+	//res, err := client.Get("https://graph.microsoft.com/v1.0/me")
+	//fmt.Println("So far got to this point...")
+	//if err != nil {
+	//log.Println("Failed to get user/me:", err)
+	//return
+	//}
+	//defer res.Body.Close()
 	//	err = json.NewDecoder(res.Body).Decode(&user)
 	//	if err != nil {
 	//		log.Println("Failed to parse user data:", err)
