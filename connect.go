@@ -8,9 +8,9 @@ import (
 	"errors"
 	"fmt"
 	"html/template"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"io/ioutil"
 	"os"
 
 	"golang.org/x/oauth2"
@@ -22,7 +22,7 @@ var (
 	clientSecret string
 	guid         string
 	user         User
-	contact		 Contact
+	contact      Contact
 )
 
 // data for template
@@ -30,21 +30,20 @@ type D map[string]interface{}
 
 // User represents a Microsoft Graph user
 type User struct {
-	Username string `json:"displayName"`
-	Email    string `json:"mail"`
-	Surname  string `json:"surname"`
+	Username  string `json:"displayName"`
+	Email     string `json:"mail"`
+	Surname   string `json:"surname"`
 	Givenname string `json:"givenname"`
 }
 
-type Contact struct
-{
-	Displayname string `json:"displayName"`
+type Contact struct {
+	Displayname    string   `json:"displayName"`
 	Emailaddresses []string `json:"odata.microsoft.graph.emailAddress"`
-	Givenname string `json:"givenName"`
-	Id string `json:"id"`
-	Mobilephone string `json:"mobilePhone"`
-	Surname string `json:"surname"`
-  }
+	Givenname      string   `json:"givenName"`
+	Id             string   `json:"id"`
+	Mobilephone    string   `json:"mobilePhone"`
+	Surname        string   `json:"surname"`
+}
 
 type Body struct {
 	ContentType string
@@ -105,7 +104,7 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 		fmt.Println("Error in get contacts:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	defer res.Body.Close() 
+	defer res.Body.Close()
 
 	bytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
@@ -113,23 +112,44 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 	}
 	content := string(bytes)
 
-	fmt.Println("\nThis is the GET restponse:\n", content)
+	// fmt.Println("\nThis is the GET restponse:\n", content)
 	// Parse template for response to app client
-	//t2, err := template.ParseFiles("tpl/contacts.html")
-	//if err != nil {
-//		fmt.Println("Error parsing template:", err)
-//		http.Error(w, err.Error(), http.StatusInternalServerError)
-//	}
-	return 		  
+	t2, err := template.ParseFiles("tpl/contacts.html")
+	if err != nil {
+		fmt.Println("Error parsing template:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	t2.Execute(w, D{
+		"me":          user,
+		"content":     content,
+		"showSuccess": false,
+		"showError":   false,
+	})
+	return
 }
 
 // Handler for home page
 func indexHandler(w http.ResponseWriter, r *http.Request) {
+	//  Log into the Office 365 site - and authenticate
 	t, err := template.ParseFiles("tpl/connect.html")
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	t.Execute(w, struct{}{})
+
+	// Grab credentials so we can use them in displaying form detail going forward
+	res, err := client.Get("https://graph.microsoft.com/v1.0/me")
+	fmt.Println("So far got to this point...")
+	if err != nil {
+		//log.Println("Failed to get user/me:", err)
+		//return
+	}
+	defer res.Body.Close()
+	//	err = json.NewDecoder(res.Body).Decode(&user)
+	//	if err != nil {
+	//		log.Println("Failed to parse user data:", err)
+	//	}
 }
 
 // Handler for login route
@@ -230,7 +250,7 @@ func sendMailHandler(w http.ResponseWriter, r *http.Request) {
 		},
 	}
 	postJSON := new(bytes.Buffer)
-	
+
 	err = json.NewEncoder(postJSON).Encode(msg)
 	if err != nil {
 		fmt.Println("error encoding msg to json:", err)
@@ -240,7 +260,7 @@ func sendMailHandler(w http.ResponseWriter, r *http.Request) {
 	// Post the message to the graph API endpoint for sending email
 	endpointURL := "https://graph.microsoft.com/v1.0/me/sendMail"
 	res, err := client.Post(endpointURL, "application/json", postJSON)
-	
+
 	if err != nil {
 		fmt.Println("error posting msg:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
