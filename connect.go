@@ -22,10 +22,10 @@ var (
 	clientSecret string
 	guid         string
 	user         User
-	contact      Contact
+	contact      ContactHeader
 )
 
-// data for template
+// D is Data for template
 type D map[string]interface{}
 
 // User represents a Microsoft Graph user
@@ -36,25 +36,44 @@ type User struct {
 	Givenname string `json:"givenname"`
 }
 
-type Contact struct {
-	Displayname    string   `json:"displayName"`
-	Emailaddresses []string `json:"odata.microsoft.graph.emailAddress"`
-	Givenname      string   `json:"givenName"`
-	Id             string   `json:"id"`
-	Mobilephone    string   `json:"mobilePhone"`
-	Surname        string   `json:"surname"`
+// ContactData is the contact detail
+type ContactData struct {
+	Etag                 string   `json:"odata.etag"`
+	ID                   string   `json:"id"`
+	Createddatetime      string   `json:"createdDateTime"`
+	Lastmodifieddatetime string   `json:"lastModifiedDateTime"`
+	Changekey            string   `json:"changeKey"`
+	Displayname          string   `json:"displayName"`
+	Emailaddresses       []string `json:"odata.microsoft.graph.emailAddress"`
+	Givenname            string   `json:"givenName"`
+	Mobilephone          string   `json:"mobilePhone"`
+	Surname              string   `json:"surname"`
 }
 
+// ContactHeader is the contact header and detail
+type ContactHeader struct {
+	Context  string `json:"odata.context"`
+	NextLink string `json:"odata.nextLink"`
+	Contacts []ContactData
+}
+
+// Body is generally the body of the returned HTML when executing.
 type Body struct {
 	ContentType string
 	Content     string
 }
+
+// EmailAddress is the Email Address of the user
 type EmailAddress struct {
 	Address string
 }
+
+// Recipient is the Receipient of the email you wish to send
 type Recipient struct {
 	EmailAddress EmailAddress
 }
+
+// Message is the specifics of the message being sent
 type Message struct {
 	Subject      string
 	Body         Body
@@ -95,7 +114,7 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 	//}
 
 	// Post the message to the graph API endpoint for sending email
-	endpointURL := "https://graph.microsoft.com/v1.0/me/contacts?$select=givenName,surname,emailAddresses"
+	endpointURL := "https://graph.microsoft.com/v1.0/me/contacts"
 	//$orderby=givenName ASC$top=50"
 	//endpointURL := "https://graph.microsoft.com/v1.0/me/contacts"
 
@@ -110,9 +129,25 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	content := string(bytes)
+	//content := string(bytes)
 
-	// fmt.Println("\nThis is the GET restponse:\n", content)
+	//fmt.Println("Bytes: ", bytes)
+	//fmt.Println("String: ", content)
+
+	var fullcont ContactHeader
+
+	err = json.Unmarshal(bytes, &fullcont)
+	if err != nil {
+		log.Println("Failed to UNMARSHAL user data:", err)
+	}
+
+	fmt.Println("After Unmarshal: ", fullcont)
+
+	//err = json.NewDecoder(res.Body).Decode(&fullcont)
+	//if err != nil {
+	//	log.Println("Failed to parse user data:", err)
+	//}
+
 	// Parse template for response to app client
 	t2, err := template.ParseFiles("tpl/contacts.html")
 	if err != nil {
@@ -122,7 +157,7 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 
 	t2.Execute(w, D{
 		"me":          user,
-		"content":     content,
+		"contact":     fullcont,
 		"showSuccess": false,
 		"showError":   false,
 	})
@@ -138,18 +173,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	}
 	t.Execute(w, struct{}{})
 
-	// Grab credentials so we can use them in displaying form detail going forward
-	//res, err := client.Get("https://graph.microsoft.com/v1.0/me")
-	//fmt.Println("So far got to this point...")
-	//if err != nil {
-	//log.Println("Failed to get user/me:", err)
-	//return
-	//}
-	//defer res.Body.Close()
-	//	err = json.NewDecoder(res.Body).Decode(&user)
-	//	if err != nil {
-	//		log.Println("Failed to parse user data:", err)
-	//	}
 }
 
 // Handler for login route
@@ -176,7 +199,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		// for the scopes specified above.
 		authurl := conf.AuthCodeURL(guid, oauth2.AccessTypeOffline)
 		http.Redirect(w, r, authurl, http.StatusSeeOther)
-		fmt.Printf(authurl)
+		// fmt.Printf(authurl)
 		return
 	}
 	// Before calling Exchange, be sure to validate FormValue("state").
@@ -191,6 +214,20 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		log.Fatal(err)
 	}
 	client = conf.Client(ctx, tok)
+
+	// Grab credentials so we can use them in displaying form detail going forward
+	res, err := client.Get("https://graph.microsoft.com/v1.0/me")
+
+	if err != nil {
+		log.Println("Failed to get user/me:", err)
+		return
+	}
+	defer res.Body.Close()
+	err = json.NewDecoder(res.Body).Decode(&user)
+	if err != nil {
+		log.Println("Failed to parse user data:", err)
+	}
+
 	http.Redirect(w, r, "/home", http.StatusSeeOther)
 	return
 }
@@ -370,5 +407,5 @@ func main() {
 	http.HandleFunc("/home", sendMailHandlerNew)
 	http.HandleFunc("/sendmail", sendMailHandler)
 	http.ListenAndServe(":8080", nil)
-	fmt.Println("Success", client.Head)
+	// fmt.Println("Success", client.Head)
 }

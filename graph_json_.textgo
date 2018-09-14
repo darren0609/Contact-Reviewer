@@ -1,0 +1,60 @@
+type Contact struct {
+	Context     string `json:"odata.context"`
+	NextLink    string `json:"odata.nextLink"`
+	ContactData struct {
+		Etag                 string   `json:"odata.etag"`
+		ID                   string   `json:"id"`
+		Createddatetime      string   `json:"createdDateTime"`
+		Lastmodifieddatetime string   `json:"lastModifiedDateTime"`
+		Changekey            string   `json:"changeKey"`
+		Displayname          string   `json:"displayName"`
+		Emailaddresses       []string `json:"odata.microsoft.graph.emailAddress"`
+		Givenname            string   `json:"givenName"`
+		Mobilephone          string   `json:"mobilePhone"`
+		Surname              string   `json:"surname"`
+	}
+}
+
+{
+Assistantname string `json:"assistantName"`
+string `json:"birthday": "String (timestamp)",
+string `json:"businessAddress": {"@odata.type": "microsoft.graph.physicalAddress"},
+string `json:"businessHomePage": "string",
+[]string `json:"businessPhones": ["string"],
+[]string `json:"categories": ["string"],
+string `json:"changeKey": "string",
+[]string `json:"children": ["string"],
+string `json:"companyName": "string",
+string `json:"createdDateTime": "String (timestamp)",
+string `json:"department": "string",
+string `json:"displayName": "string",
+string `json:"emailAddresses": [{"@odata.type": "microsoft.graph.emailAddress"}],
+string `json:"flag": {"@odata.type": "microsoft.graph.followupFlag"},
+string `json:"fileAs": "string",
+string `json:"generation": "string",
+string `json:"givenName": "string",
+string `json:"homeAddress": {"@odata.type": "microsoft.graph.physicalAddress"},
+string `json:"homePhones": ["string"],
+string `json:"id": "string (identifier)",
+string `json:"imAddresses": ["string"],
+string `json:"initials": "string",
+string `json:"jobTitle": "string",
+string `json:"lastModifiedDateTime": "String (timestamp)",
+string `json:"manager": "string",
+string `json:"middleName": "string",
+string `json:"mobilePhone": "string",
+string `json:"nickName": "string",
+string `json:"officeLocation": "string",
+string `json:"otherAddress": {"@odata.type": "microsoft.graph.physicalAddress"},
+string `json:"parentFolderId": "string",
+string `json:"personalNotes": "string",
+string `json:"profession": "string",
+string `json:"spouseName": "string",
+string `json:"surname": "string",
+string `json:"title": "string",
+string `json:"yomiCompanyName": "string",
+string `json:"yomiGivenName": "string",
+string `json:"yomiSurname": "string",
+  
+	"photo": { "@odata.type": "microsoft.graph.profilePhoto" }
+  }
