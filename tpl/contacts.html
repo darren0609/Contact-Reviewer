@@ -42,23 +42,25 @@
           <th >Email Address</th>
           <th >Work Phone</th>
           <th >Mobile Phone</th>
+          <th >Home Phone</th>
           <th >Action</th>
           </tr>
         </thead>
           <tbody>
+            {{range .contact.Contacts }}
           <tr>
-          <td>Darren</td>
-          <td>Haysom</td>
-          <td>darren.haysom&commat;nike.com</td>
-          <td>(503) 432-6926</td>
-          <td>(503) 432-6926</td>
+          <td>{{ .Givenname }}</td>
+          <td>{{ .Surname }}</td>
+          <td>{{ range .Emailaddresses }} {{ . }} {{ end }} </td>
+          <td>{{ range .Officephone }} {{ . }} {{ end }} </td>
+          <td>{{ .Mobilephone }}</td>
+          <td>{{ range .Homephone }} {{ . }} {{ end }}</td>
           <td align="center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".modal1">Edit</button></td>
           </tr>
+          {{ end }}
           </tbody>
       </table>
     </div>
 </div>    
-
-{{ .contact.contacts.Givenname }}
 </body>
 </html>

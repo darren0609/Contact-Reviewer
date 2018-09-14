@@ -44,6 +44,8 @@ type ContactData struct {
 	Lastmodifieddatetime string   `json:"lastModifiedDateTime"`
 	Changekey            string   `json:"changeKey"`
 	Displayname          string   `json:"displayName"`
+	Officephone          []string `json:"businessPhones"`
+	Homephone            []string `json:"homePhones"`
 	Emailaddresses       []string `json:"odata.microsoft.graph.emailAddress"`
 	Givenname            string   `json:"givenName"`
 	Mobilephone          string   `json:"mobilePhone"`
@@ -52,9 +54,9 @@ type ContactData struct {
 
 // ContactHeader is the contact header and detail
 type ContactHeader struct {
-	Context  string `json:"odata.context"`
-	NextLink string `json:"odata.nextLink"`
-	Contacts []ContactData
+	Context  string        `json:"odata.context"`
+	NextLink string        `json:"odata.nextLink"`
+	Contacts []ContactData `json:"value"`
 }
 
 // Body is generally the body of the returned HTML when executing.
@@ -104,6 +106,8 @@ func getCreds(filepath string) (string, string, error) {
 }
 
 func getContacts(w http.ResponseWriter, r *http.Request) {
+	var fullcont ContactHeader
+
 	// Use OData query parameters to control the results
 	// - Only first 10 results returned
 	// - Only return the GivenName, Surname, and EmailAddresses fields
@@ -129,24 +133,11 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	//content := string(bytes)
-
-	//fmt.Println("Bytes: ", bytes)
-	//fmt.Println("String: ", content)
-
-	var fullcont ContactHeader
 
 	err = json.Unmarshal(bytes, &fullcont)
 	if err != nil {
 		log.Println("Failed to UNMARSHAL user data:", err)
 	}
-
-	fmt.Println("After Unmarshal: ", fullcont)
-
-	//err = json.NewDecoder(res.Body).Decode(&fullcont)
-	//if err != nil {
-	//	log.Println("Failed to parse user data:", err)
-	//}
 
 	// Parse template for response to app client
 	t2, err := template.ParseFiles("tpl/contacts.html")
