@@ -390,7 +390,7 @@ func main() {
 		os.Exit(1)
 	}
 
-	http.HandleFunc("/", indexHandler)
+	http.HandleFunc("/", loginHandler)
 	http.HandleFunc("/login", loginHandler)
 	http.HandleFunc("/logout", logoutHandler)
 	http.HandleFunc("/main", mainHandler)
