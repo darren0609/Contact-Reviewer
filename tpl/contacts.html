@@ -1,38 +1,38 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Python Outlook API Sample</title>
+  <title>Office 365 API Example</title>
   <!-- Latest compiled and minified CSS -->
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
 
   <!-- Optional theme -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 </head>
-<body style="padding-top: 70px;">
-  <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
-      <div class="navbar-header">
-        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
-          <span class="sr-only">Toggle navigation</span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
-          <span class="icon-bar"></span>
+<body>
+  <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
+    <div class="navbar">
+        <a class="navbar-brand" href="/">{{ .me.Givenname }} {{ .me.Surname }}</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
+          <span class="navbar-toggler-icon"></span>
         </button>
-        <a class="navbar-brand" href="/">{{ .me.Givenname }} {{ .me.Surname }} - Outlook</a>
-      </div>
-      <div id="navbar" class="navbar-collapse collapse">
-        <ul class="nav navbar-nav authed-nav">
-          <li id='home-nav'><a href="/">Home</a></li>
-          <li id='inbox-nav'><a href="/home">Inbox</a></li>
-          <li id='calendar-nav'><a href="/events">Calendar</a></li>
-          <li id='contacts-nav'><a href="/contacts">Contacts</a></li>
+        <ul class="navbar-nav bd-navbar-nav flex-row">
+          <li class="nav-item" id='home-nav'><a class="nav-link" href="/">Home</a></li>
+          <li class="nav-item" id='inbox-nav'><a class="nav-link" href="/home">Inbox</a></li>
+          <li class="nav-item" id='calendar-nav'><a class="nav-link disabled" href="/events">Calendar</a></li>
+          <li class="nav-item" id='contacts-nav'><a class="nav-link" href="/contacts">Contacts</a></li>
         </ul>
+      </div>
       </div>
     </div>
   </nav>
 
-<div class="container main-container">
-  <h2>Contact listing</h2>
+<main role="main">  
+<div class="jumbotron">
+  <h1 class="display-3">Contact listing</h1>
+  <p class="lead">Current list of all contacts.</p>
+  <hr class="my-2">
+  </p>
   <div class="table-responsive pull-center" style="width:100%;">
     <table width="100%" class="table table-striped table-bordered table-hover">
         <thead>
@@ -61,6 +61,8 @@
           </tbody>
       </table>
     </div>
+    </div>
 </div>    
+</main>
 </body>
 </html>
