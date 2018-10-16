@@ -1,3 +1,4 @@
 .vscode/launch.json
 private.txt
 .gitignore
+credentials.json
