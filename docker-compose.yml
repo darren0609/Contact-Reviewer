@@ -1,0 +1,26 @@
+version: '3'
+
+services:
+
+  connect:
+    container_name: connect
+    image: darren0609/connect:v1
+    hostname: connect
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      GET_HOSTS_FROM: dns
+    networks:
+    - connectnet
+    volumes:
+    - .:/go/src/connect
+    ports:
+    - 8080:8080
+    
+    labels:
+      kompose.service.type: LoadBalancer
+
+networks:
+  connectnet:
+    driver: bridge
