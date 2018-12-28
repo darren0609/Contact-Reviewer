@@ -13,6 +13,7 @@ import (
 	"net/http"
 	"os"
 
+	"github.com/gorilla/mux"
 	"golang.org/x/oauth2"
 )
 
@@ -82,7 +83,7 @@ type Message struct {
 	ToRecipients []Recipient
 }
 
-// # read private credentials from text file
+// getCreds - will read private credentials from text file and return them for use later within the routers.
 func getCreds(filepath string) (string, string, error) {
 	var err error
 	var id, secret string
@@ -105,8 +106,23 @@ func getCreds(filepath string) (string, string, error) {
 	return id, secret, err
 }
 
+func classifyAPI(url string) ([]byte, error) {
+	var resp *http.Response
+	var err error
+
+	if resp, err = http.Get(url); err != nil {
+		return []byte{}, err
+	}
+
+	defer resp.Body.Close()
+
+	return ioutil.ReadAll(resp.Body)
+}
+
 func getContacts(w http.ResponseWriter, r *http.Request) {
 	var fullcont ContactHeader
+	var endpointURL string
+	var err error
 
 	// Use OData query parameters to control the results
 	// - Only first 10 results returned
@@ -118,9 +134,15 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 	//}
 
 	// Post the message to the graph API endpoint for sending email
-	endpointURL := "https://graph.microsoft.com/v1.0/me/contacts"
+
 	//$orderby=givenName ASC$top=50"
 	//endpointURL := "https://graph.microsoft.com/v1.0/me/contacts"
+
+	if r.FormValue("search") != "" {
+		endpointURL = "https://graph.microsoft.com/v1.0/me/contacts?$search=" + r.FormValue("search")
+	} else {
+		endpointURL = "https://graph.microsoft.com/v1.0/me/contacts"
+	}
 
 	res, err := client.Get(endpointURL)
 	if err != nil {
@@ -146,12 +168,17 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
-	t2.Execute(w, D{
+	err = t2.Execute(w, D{
 		"me":          user,
 		"contact":     fullcont,
 		"showSuccess": false,
 		"showError":   false,
 	})
+
+	if err != nil {
+		fmt.Println("Error executing template pass with data: ", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 	return
 }
 
@@ -390,13 +417,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	http.HandleFunc("/", loginHandler)
-	http.HandleFunc("/login", loginHandler)
-	http.HandleFunc("/logout", logoutHandler)
-	http.HandleFunc("/main", mainHandler)
-	http.HandleFunc("/contacts", getContacts)
-	http.HandleFunc("/home", sendMailHandlerNew)
-	http.HandleFunc("/sendmail", sendMailHandler)
-	http.ListenAndServe(":8080", nil)
+	r := mux.NewRouter()
+	r.HandleFunc("/", loginHandler)
+	r.HandleFunc("/login", loginHandler)
+	r.HandleFunc("/logout", logoutHandler)
+	r.HandleFunc("/main", mainHandler)
+	r.HandleFunc("/contacts", getContacts)
+	r.HandleFunc("/home", sendMailHandlerNew)
+	r.HandleFunc("/sendmail", sendMailHandler)
+	http.ListenAndServe(":8080", r)
+
 	// fmt.Println("Success", client.Head)
 }
