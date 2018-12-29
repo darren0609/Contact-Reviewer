@@ -12,15 +12,16 @@
 <body>
   <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark">
     <div class="navbar">
-        <a class="navbar-brand" href="/">{{ .me.Givenname }} {{ .me.Surname }}</a>
+        <a class="navbar-brand" href="/home">{{ .me.Givenname }} {{ .me.Surname }}</a>
         <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarsExampleDefault" aria-controls="navbarsExampleDefault" aria-expanded="false" aria-label="Toggle navigation">
           <span class="navbar-toggler-icon"></span>
         </button>
         <ul class="navbar-nav bd-navbar-nav flex-row">
-          <li class="nav-item" id='home-nav'><a class="nav-link" href="/">Home</a></li>
+          <!-- <li class="nav-item" id='home-nav'><a class="nav-link" href="/">Home</a></li>
           <li class="nav-item" id='inbox-nav'><a class="nav-link" href="/home">Inbox</a></li>
-          <li class="nav-item" id='calendar-nav'><a class="nav-link disabled" href="/events">Calendar</a></li>
-          <li class="nav-item" id='contacts-nav'><a class="nav-link" href="/contacts">Contacts</a></li>
+          <li class="nav-item" id='calendar-nav'><a class="nav-link disabled" href="/events">Calendar</a></li>-->
+          <li class="nav-item" id='contacts-nav'><a class="nav-link" href="/home">Contact Listing</a></li>
+          
         </ul>
       </div>
       </div>
@@ -32,38 +33,29 @@
   <h1 class="display-3">Contact listing</h1>
   <p class="lead">Current list of all contacts.</p>
 
-  <form id="search-form" onsubmit="return false">
-    <input name="search" />
-    <input type="submit" value="Search" onclick="submitSearch()" />
-  </form>
-
   <hr class="my-2">
-  </p>
+
+</p>
+<form id="search-form" onsubmit="return false">
+  <div class="form-group row">
+  <div class="col-sm-5"><input name="search" class="form-control form-control-lg" type="text" placeholder=""></div>
+  <input type="submit" class="btn btn-default btn-xs" value="Search" onclick="submitSearch()" /></div>
+</form>
+<br><br>
   <div class="table-responsive pull-center" style="width:100%;">
-    <table id="contact-listing" width="100%" class="table table-striped table-bordered table-hover">
+    <table width="100%" class="table table-striped table-bordered table-hover">
         <thead>
           <tr class="info">
-          <th onclick="sortContacts('firstname')">First Name</th>
-          <th onclick="sortContacts('secondname')">Second Name</th>
-          <th onclick="sortContacts('emailaddress')">Email Address</th>
-          <th onclick="sortContacts('workphone')">Work Phone</th>
-          <th onclick="sortContacts('mobilephone')">Mobile Phone</th>
-          <th onclick="sortContacts('homephone')">Home Phone</th>
+          <th onclick="sortContacts('givenName')">First Name</th>
+          <th onclick="sortContacts('surname')">Second Name</th>
+          <th>Email Address(es)</th>
+          <th>Work Phone</th>
+          <th>Mobile Phone</th>
+          <th>Home Phone</th>
           <th >Action</th>
           </tr>
         </thead>
-          <tbody>
-            {{range .contact.Contacts }}
-          <tr>
-          <td>{{ .Givenname }}</td>
-          <td>{{ .Surname }}</td>
-          <td>{{ range .Emailaddresses }} {{ . }} {{ end }} </td>
-          <td>{{ range .Officephone }} {{ . }} {{ end }} </td>
-          <td>{{ .Mobilephone }}</td>
-          <td>{{ range .Homephone }} {{ . }} {{ end }}</td>
-          <td align="center"><button type="button" class="btn btn-default btn-xs" data-toggle="modal" data-target=".modal1">Edit</button></td>
-          </tr>
-          {{ end }}
+          <tbody id="contact-listing">
           </tbody>
       </table>
     </div>
@@ -71,32 +63,75 @@
 </div>    
 <script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
 <script type="text/javascript">
-  function submitSearch() {
-    $.ajax({
-      url: "/contacts",
-      method: "POST",
-      data: $("#search-form").serialize(),
-      success: function(rawData) {
-        var parsed = JSON.parse(rawData);
+
+  function showViewPage() {
+        $("#contact-listing").hide()
+        $("#view-page").show()
+      }
+      function showSearchPage() {
+        $("#contact-listing").show()
+        $("#view-page").hide()
+      }
+      function submitSearch() {
+        $.ajax({
+          url: "/search",
+          method: "POST",
+          data: $("#search-form").serialize(),
+          success: function(rawData) {
+            var parsed = JSON.parse(rawData);
+            if (!parsed) return;
+          
+            var searchResults = $("#contact-listing");
+            searchResults.empty();
+
+            parsed.value.forEach(function(result) {
+              appendContact(result);
+            });
+                      }
+        }); 
+        return false;
+      }
+
+      function rebuildContacts(result) {
+        var parsed = JSON.parse(result);
         if (!parsed) return;
 
-        var searchResults = $("#search-results");
-        searchResults.empty();
+        $("#contact-listing").empty();
 
-        parsed.forEach(function(result) {
-          var row = $("<tr><td>" + result.Title + "</td><td>" + result.Author + "</td><td>" + result.Year +  "</td><td>" + result.ID + "</td></tr>");
-          searchResults.append(row);
-          row.on("click", function() {
-            $.ajax({
-              url: "/books/add?id=" + result.ID,
-              method: "GET"
-            })
-          })
+        parsed.value.forEach(function(result) {
+            appendContact(result);
         });
       }
-    });
-    return false;
+
+      function sortContacts(columnName) {
+        $.ajax({
+          method: "POST",
+          url: "/search?sortBy=" + columnName,
+          success: rebuildContacts
+        })
+      }
+
+  function appendContact(contact) {
+     var emailcheck = ""
+     if (contact.emailAddresses.length == 0) {
+       emailcheck = "";
+     } else {
+       for (i = 0; i < contact.emailAddresses.length; i++) {
+         if (emailcheck.length > "") {
+           emailcheck = emailcheck + "; ";
+         }
+
+         if (contact.emailAddresses[i].address.length == 0) {
+            emailcheck = emailcheck + "BLANK";
+         } else {
+        emailcheck = emailcheck + contact.emailAddresses[i].address
+         }
+       }
+  
+     }
+    $("#contact-listing").append("<tr><td>" + contact.givenName + "</td><td>" + contact.surname + "</td><td>" + emailcheck + "</td><td>" + contact.businessPhones + "</td><td>" + contact.mobilePhone +"</td><td>" + contact.homePhones + "<td align=\"center\"><button type=\"button\" class=\"btn btn-default btn-xs\" data-toggle=\"modal\" data-target=\".modal1\">Edit</button></td></tr>");
   }
+
 </script>    
 </main>
 </body>
