@@ -157,11 +157,11 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 		guid = ""
 	}
 	ctx := context.Background()
-	tok, err := conf.Exchange(ctx, code)
+	token, err := conf.Exchange(ctx, code)
 	if err != nil {
 		log.Fatal(err)
 	}
-	client = conf.Client(ctx, tok)
+	client = conf.Client(ctx, token)
 
 	// Grab credentials so we can use them in displaying form detail going forward
 	res, err := client.Get("https://graph.microsoft.com/v1.0/me")
@@ -201,6 +201,8 @@ func main() {
 	//fmt.Println("Client Secret : ", clientSecret)
 }
 
+// searchHandler primarily responds back with the data sets to be maniupulted within the tempate, including search and sort criteria.
+// need to resolve both search and sort - so that a user can sort a list that has been searched on.
 func searchHandler(w http.ResponseWriter, r *http.Request) {
 	var endpointURL string
 	var results ContactHeader
@@ -260,7 +262,7 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-// Handler for sendmail route
+// Handler for sendmail route - default route handler. Need to fix after checking the search handler can take care of all the redirects.
 func homeHandler(w http.ResponseWriter, r *http.Request) {
 	var fullcont ContactHeader
 	var endpointURL string
@@ -282,13 +284,12 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 
 	endpointURL = "https://graph.microsoft.com/v1.0/me/contacts"
 
-	if r.FormValue("search") != "" {
-		endpointURL = endpointURL + "?$search=" + r.FormValue("search")
-	}
+	//if r.FormValue("search") != "" {
+	//		endpointURL = endpointURL + "?$search=" + r.FormValue("search")
+	//	}
 
 	res, err := client.Get(endpointURL)
 	if err != nil {
-		fmt.Println("Error in get contacts:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	defer res.Body.Close()
@@ -306,7 +307,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	// Parse template for response to app client
 	t2, err := template.ParseFiles("tpl/contacts.html")
 	if err != nil {
-		fmt.Println("Error parsing template:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
@@ -318,7 +318,6 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	})
 
 	if err != nil {
-		fmt.Println("Error executing template pass with data: ", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 	return
