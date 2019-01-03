@@ -264,8 +264,6 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	params := mux.Vars(r)
-
 	if r.FormValue("search") != "" {
 		endpointURL = endpointURL + "?$search=" + r.FormValue("search")
 		log.Println("Search value set: ", r.FormValue("search"))
