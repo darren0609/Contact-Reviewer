@@ -1,4 +1,5 @@
 .vscode/launch.json
+.vscode
 init
 _quickstart.go_DONOTUSE
 connect_go.orig

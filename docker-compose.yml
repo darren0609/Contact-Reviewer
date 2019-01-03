@@ -8,15 +8,15 @@ services:
     hostname: connect
     build:
       context: .
-      dockerfile: Dockerfile
+      dockerfile: dockerfile
     environment:
       GET_HOSTS_FROM: dns
     networks:
     - connectnet
     volumes:
-    - .:/go/src/connect
+    - .:/go/src/main
     ports:
-    - 8080:8080
+    - 8090:8090
     
     labels:
       kompose.service.type: LoadBalancer
