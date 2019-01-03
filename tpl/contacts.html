@@ -129,7 +129,8 @@
        }
   
      }
-    $("#contact-listing").append("<tr><td>" + contact.givenName + "</td><td>" + contact.surname + "</td><td>" + emailcheck + "</td><td>" + contact.businessPhones + "</td><td>" + contact.mobilePhone +"</td><td>" + contact.homePhones + "<td align=\"center\"><button type=\"button\" class=\"btn btn-default btn-xs\" data-toggle=\"modal\" data-target=\".modal1\">Edit</button></td></tr>");
+    
+    $("#contact-listing").append("<tr><td>" + contact.givenName + "</td><td>" + contact.surname + "</td><td>" + emailcheck + "</td><td>" + contact.businessPhones + "</td><td>" + contact.mobilePhone +"</td><td>" + contact.homePhones + "<td align=\"center\"><a href=\"../contacts/" + contact.id + "\" class=\"btn btn-default btn-xs\" data-toggle=\"modal\" data-target=\".modal1\">Edit</a></td></tr>");
   }
 
 </script>    

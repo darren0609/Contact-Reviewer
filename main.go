@@ -39,19 +39,19 @@ type User struct {
 
 // ContactData is the contact detail
 type ContactData struct {
-	//Etag                 string   `json:"odata.etag"`
-	//ID                   string   `json:"id"`
-	//Createddatetime      string   `json:"createdDateTime"`
-	//Lastmodifieddatetime string   `json:"lastModifiedDateTime"`
-	//Changekey            string   `json:"changeKey"`
-	Displayname     string         `json:"displayName"`
-	Officephone     []string       `json:"businessPhones"`
-	Homephone       []string       `json:"homePhones"`
-	Emailaddresses  []EmailAddress `json:"emailAddresses"`
-	Givenname       string         `json:"givenName"`
-	Mobilephone     string         `json:"mobilePhone"`
-	Surname         string         `json:"surname"`
-	Businessaddress Address        `json:"businessAddress"`
+	Etag                 string         `json:"odata.etag"`
+	ID                   string         `json:"id"`
+	Createddatetime      string         `json:"createdDateTime"`
+	Lastmodifieddatetime string         `json:"lastModifiedDateTime"`
+	Changekey            string         `json:"changeKey"`
+	Displayname          string         `json:"displayName"`
+	Officephone          []string       `json:"businessPhones"`
+	Homephone            []string       `json:"homePhones"`
+	Emailaddresses       []EmailAddress `json:"emailAddresses"`
+	Givenname            string         `json:"givenName"`
+	Mobilephone          string         `json:"mobilePhone"`
+	Surname              string         `json:"surname"`
+	Businessaddress      Address        `json:"businessAddress"`
 }
 
 // Address is the sub-detail within addresses
@@ -265,8 +265,6 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 	}
 
 	params := mux.Vars(r)
-
-	log.Println("Paramaters are: ", params["id"])
 
 	if r.FormValue("search") != "" {
 		endpointURL = endpointURL + "?$search=" + r.FormValue("search")
