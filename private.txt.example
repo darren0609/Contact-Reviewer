@@ -4,3 +4,6 @@
 The first two lines of this file should be edited to contain the
 client application ID and client secret, each on a single line with
 no quotes or brackets.
+
+The code is written to find this file within the ./init folder - it is recommended that you create that folder, and place this file there. 
+
