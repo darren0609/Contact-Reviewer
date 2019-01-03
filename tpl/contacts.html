@@ -74,8 +74,8 @@
       }
       function submitSearch() {
         $.ajax({
-          url: "/search",
-          method: "POST",
+          url: "/contacts",
+          method: "GET",
           data: $("#search-form").serialize(),
           success: function(rawData) {
             var parsed = JSON.parse(rawData);
@@ -105,8 +105,8 @@
 
       function sortContacts(columnName) {
         $.ajax({
-          method: "POST",
-          url: "/search?sortBy=" + columnName,
+          method: "GET",
+          url: "/contacts?sortBy=" + columnName,
           success: rebuildContacts
         })
       }

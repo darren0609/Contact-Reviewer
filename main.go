@@ -11,6 +11,7 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -50,7 +51,7 @@ type ContactData struct {
 	Givenname       string         `json:"givenName"`
 	Mobilephone     string         `json:"mobilePhone"`
 	Surname         string         `json:"surname"`
-	Businessaddress []Address      `json:"businessAddress"`
+	Businessaddress Address        `json:"businessAddress"`
 }
 
 // Address is the sub-detail within addresses
@@ -180,6 +181,32 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 	return
 }
 
+func getPerson(w http.ResponseWriter, r *http.Request) {
+	time1 := time.Now()
+
+	params := mux.Vars(r)
+
+	message := "Person being searched for is: " + params["id"]
+	fmt.Fprintf(w, message)
+
+	time2 := time.Now()
+	log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
+}
+
+func deletePerson(w http.ResponseWriter, r *http.Request) {
+	time1 := time.Now()
+	fmt.Fprintf(w, "Not currently implemented.")
+	time2 := time.Now()
+	log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
+}
+
+func createPerson(w http.ResponseWriter, r *http.Request) {
+	time1 := time.Now()
+	fmt.Fprintf(w, "Not currently implemented.")
+	time2 := time.Now()
+	log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
+}
+
 func main() {
 	var err error
 	// Configure API ClientID/Secret from configuration file
@@ -194,8 +221,11 @@ func main() {
 	r.HandleFunc("/", loginHandler)
 	r.HandleFunc("/login", loginHandler)
 	r.HandleFunc("/home", homeHandler)
-	r.HandleFunc("/search", searchHandler)
-	http.ListenAndServe(":8080", r)
+	r.HandleFunc("/contacts", getContacts).Methods("GET")
+	r.HandleFunc("/contacts/{id}", getPerson).Methods("GET")
+	r.HandleFunc("/contacts/{id}", deletePerson).Methods("DELETE")
+	r.HandleFunc("/contacts/{id}", createPerson).Methods("POST")
+	log.Fatal(http.ListenAndServe(":8080", r))
 
 	//fmt.Println("Client ID : ", clientID)
 	//fmt.Println("Client Secret : ", clientSecret)
@@ -203,10 +233,12 @@ func main() {
 
 // searchHandler primarily responds back with the data sets to be maniupulted within the tempate, including search and sort criteria.
 // need to resolve both search and sort - so that a user can sort a list that has been searched on.
-func searchHandler(w http.ResponseWriter, r *http.Request) {
+func getContacts(w http.ResponseWriter, r *http.Request) {
 	var endpointURL string
 	var results ContactHeader
 	var err error
+
+	time1 := time.Now()
 
 	// Use OData query parameters to control the results
 	// - Only first 10 results returned
@@ -224,19 +256,28 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 
 	endpointURL = "https://graph.microsoft.com/v1.0/me/contacts"
 
+	if client == nil {
+		time2 := time.Now()
+		log.Printf("User not authenticated yet, redirecting.")
+		log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	params := mux.Vars(r)
+
+	log.Println("Paramaters are: ", params["id"])
+
 	if r.FormValue("search") != "" {
 		endpointURL = endpointURL + "?$search=" + r.FormValue("search")
+		log.Println("Search value set: ", r.FormValue("search"))
 	}
-
-	fmt.Println("Before I check the formvalue: ", r.FormValue("sortBy"))
 
 	if r.FormValue("sortBy") != "" {
-
 		endpointURL = endpointURL + "?$orderby=" + r.FormValue("sortBy")
-		fmt.Println("Made it inside the sortBy setting")
+		log.Println("sortBy value set: ", r.FormValue("soryBy"))
 	}
 
-	fmt.Println("EndpointURL: ", endpointURL)
 	res, err := client.Get(endpointURL)
 	if err != nil {
 		fmt.Println("Error in get contacts:", err)
@@ -254,12 +295,13 @@ func searchHandler(w http.ResponseWriter, r *http.Request) {
 		log.Println("Failed to UNMARSHAL user data:", err)
 	}
 
-	fmt.Println("Results are : ", results)
-
 	encoder := json.NewEncoder(w)
 	if err := encoder.Encode(results); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+	time2 := time.Now()
+	log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
 }
 
 // Handler for sendmail route - default route handler. Need to fix after checking the search handler can take care of all the redirects.
@@ -268,35 +310,35 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	var endpointURL string
 	var err error
 
-	// Use OData query parameters to control the results
-	// - Only first 10 results returned
-	// - Only return the GivenName, Surname, and EmailAddresses fields
-	// - Sort the results by the GivenName field in ascending order
-	//query_parameters := "$top=50",
-	//	"$select" : "givenName,surname,emailAddresses",
-	//	"$orderby": "givenName ASC",
-	//}
-
-	// Post the message to the graph API endpoint for sending email
-
-	//$orderby=givenName ASC$top=50"
-	//endpointURL := "https://graph.microsoft.com/v1.0/me/contacts"
+	time1 := time.Now()
 
 	endpointURL = "https://graph.microsoft.com/v1.0/me/contacts"
 
-	//if r.FormValue("search") != "" {
-	//		endpointURL = endpointURL + "?$search=" + r.FormValue("search")
-	//	}
+	if client == nil {
+		time2 := time.Now()
+		log.Printf("User not authenticated yet, redirecting.")
+		log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
 
 	res, err := client.Get(endpointURL)
+
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
 	}
+
 	defer res.Body.Close()
+	if res == nil {
+		fmt.Println("Got into the checking for res being entered.")
+		return
+	}
 
 	bytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
-		panic(err)
+		fmt.Println("We got that error when trying to touch the res.Body data.")
+		//panic(err)
 	}
 
 	err = json.Unmarshal(bytes, &fullcont)
@@ -320,5 +362,9 @@ func homeHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
+
+	time2 := time.Now()
+	log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
+
 	return
 }
