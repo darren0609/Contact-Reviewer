@@ -7,12 +7,15 @@
 Overall intent here is to build a solution to allow you to consolidate all of your contact information from various source infromation systems and allow them to populate and be edited. 
 
 Ideal future functionality; 
-* Consolidate all contacts to a source system
-* Remove duplicates
+* Consolidate all contacts to a source system of the users choice
+* Remove duplicates across the different source systems
 * Make decisions around duplicated information - where different email, phone, address details may exist
+* Create in a way that can be called either via a UI, or via an API call
 
-## connect.go 
+## main.go 
 
+- You will need to create a folder called `init` where you will need to place the PRIVATE.TXT
+- To create your App ID and Secret - start here ![](https://assets.onestore.ms/cdnfiles/external/uhf/long/9a49a7e9d8e881327e81b9eb43dabc01de70a9bb/images/microsoft-white.png) [Microsoft - Application Registration Portal](https://apps.dev.microsoft.com)
 - Core of program, fundamentally creates authentication to MSGraph using details found in PRIVATE.TXT
 
 
