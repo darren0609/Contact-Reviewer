@@ -182,12 +182,53 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func getPerson(w http.ResponseWriter, r *http.Request) {
+	var fullcont ContactData
 	time1 := time.Now()
-
 	params := mux.Vars(r)
 
-	message := "Person being searched for is: " + params["id"]
-	fmt.Fprintf(w, message)
+	if client == nil {
+		time2 := time.Now()
+		log.Printf("User not authenticated yet, redirecting.")
+		log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
+		http.Redirect(w, r, "/", http.StatusSeeOther)
+		return
+	}
+
+	endpointURL := "https://graph.microsoft.com/v1.0/me/contacts/" + params["id"]
+
+	results, err := client.Get(endpointURL)
+	if err != nil {
+		fmt.Println("Error in get contacts:", err)
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+	defer results.Body.Close()
+
+	bytes, err := ioutil.ReadAll(results.Body)
+	if err != nil {
+		panic(err)
+	}
+
+	err = json.Unmarshal(bytes, &fullcont)
+	if err != nil {
+		log.Println("Failed to UNMARSHAL user data:", err)
+	}
+
+	// Parse template for response to app client
+	t2, err := template.ParseFiles("tpl/contact_edit.html")
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
+
+	err = t2.Execute(w, D{
+		"me":          user,
+		"contact":     fullcont,
+		"showSuccess": false,
+		"showError":   false,
+	})
+
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+	}
 
 	time2 := time.Now()
 	log.Printf("[%s] %q %v", r.Method, r.URL.String(), time2.Sub(time1))
