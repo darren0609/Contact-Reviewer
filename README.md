@@ -3,7 +3,7 @@
 [![godoc](https://godoc.org/github.com/darren0609/msgraph-go-contacts?status.svg)](https://godoc.org/github.com/darren0609/msgraph-go-contacts)
 [![Build Status](https://travis-ci.org/darren0609/msgraph-go-contacts.svg?branch=master)](https://travis-ci.org/darren0609/msgraph-go-contacts)
 [![Go Report Card](https://goreportcard.com/badge/github.com/darren0609/msgraph-go-contacts)](https://goreportcard.com/report/github.com/darren0609/msgraph-go-contacts)
-[![Github Pages site](https://darren0609.github.io/Contact-Reviewier/)]
+[![Github Pages](https://darren0609.github.io/Contact-Reviewier/)]https://img.shields.io/badge/Github%20Pages-link-brightgreen.svg
 
 Overall intent here is to build a solution to allow you to consolidate all of your contact information from various source infromation systems and allow them to populate and be edited. 
 
