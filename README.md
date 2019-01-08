@@ -1,4 +1,4 @@
-# msgraph-go-contacts
+# Contact Reviewer (previously: msgraph-go-contacts)
 
 [![godoc](https://godoc.org/github.com/darren0609/msgraph-go-contacts?status.svg)](https://godoc.org/github.com/darren0609/msgraph-go-contacts)
 [![Build Status](https://travis-ci.org/darren0609/msgraph-go-contacts.svg?branch=master)](https://travis-ci.org/darren0609/msgraph-go-contacts)
