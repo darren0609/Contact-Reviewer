@@ -1,7 +1,7 @@
 # Contact Reviewer (previously: msgraph-go-contacts)
 
 [![godoc](https://godoc.org/github.com/darren0609/msgraph-go-contacts?status.svg)](https://godoc.org/github.com/darren0609/msgraph-go-contacts)
-[![Build Status](https://travis-ci.org/darren0609/msgraph-go-contacts.svg?branch=master)](https://travis-ci.org/darren0609/msgraph-go-contacts)
+[![Build Status](https://travis-ci.org/darren0609/Contact-Reviewier.svg?branch=master)](https://travis-ci.org/darren0609/Contact-Reviewier)
 [![Go Report Card](https://goreportcard.com/badge/github.com/darren0609/msgraph-go-contacts)](https://goreportcard.com/report/github.com/darren0609/msgraph-go-contacts)
 [![Github Pages](https://img.shields.io/badge/Github%20Pages-URL-blue.svg)](https://darren0609.github.io/Contact-Reviewier/)
 
