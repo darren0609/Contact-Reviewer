@@ -1,9 +1,9 @@
 # Golang Contacts App
 
-[![godoc](https://godoc.org/github.com/darren0609/contact-reviewer?status.svg)](https://godoc.org/github.com/darren0609/contact-reviewer)
-[![Build Status](https://travis-ci.org/darren0609/contact-reviewer.svg?branch=refactoring)](https://travis-ci.org/darren0609/contact-reviewer)
-[![Go Report Card](https://goreportcard.com/badge/github.com/darren0609/contact-reviewer)](https://goreportcard.com/report/github.com/darren0609/contact-reviewer)
-[![codecov](https://codecov.io/gh/darren0609/contact-reviewer/branch/master/graph/badge.svg)](https://codecov.io/gh/darren0609/contact-reviewer)
+[![godoc](https://godoc.org/github.com/darren0609/Contact-Reviewer?status.svg)](https://godoc.org/github.com/darren0609/Contact-Reviewer)
+[![Build Status](https://travis-ci.org/darren0609/Contact-Reviewer.svg?branch=Refactoring)](https://travis-ci.org/darren0609/Contact-Reviewer)
+[![Go Report Card](https://goreportcard.com/badge/github.com/darren0609/Contact-Reviewer)](https://goreportcard.com/report/github.com/darren0609/Contact-Reviewer)
+[![codecov](https://codecov.io/gh/darren0609/Contact-Reviewer/branch/master/graph/badge.svg)](https://codecov.io/gh/darren0609/Contact-Reviewer)
 
 Overall intent here is to build a solution to allow you to consolidate all of your contact information from various source infromation systems and allow them to populate and be edited. 
 
