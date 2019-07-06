@@ -1,7 +1,7 @@
 # Golang Contacts App
 
 [![godoc](https://godoc.org/github.com/darren0609/contact-reviewer?status.svg)](https://godoc.org/github.com/darren0609/contact-reviewer)
-[![Build Status](https://travis-ci.org/darren0609/contact-reviewer.svg?branch=master)](https://travis-ci.org/darren0609/contact-reviewer)
+[![Build Status](https://travis-ci.org/darren0609/contact-reviewer.svg?branch=refactoring)](https://travis-ci.org/darren0609/contact-reviewer)
 [![Go Report Card](https://goreportcard.com/badge/github.com/darren0609/contact-reviewer)](https://goreportcard.com/report/github.com/darren0609/contact-reviewer)
 [![codecov](https://codecov.io/gh/darren0609/contact-reviewer/branch/master/graph/badge.svg)](https://codecov.io/gh/darren0609/contact-reviewer)
 
