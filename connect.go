@@ -1,17 +1,17 @@
 package main
 
 import (
-	"bufio"
 	"bytes"
 	"context"
 	"encoding/json"
-	"errors"
 	"fmt"
 	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
+
+	"github.com/darren0609/Contact-Reviewer/o365"
 
 	"golang.org/x/oauth2"
 )
@@ -80,29 +80,6 @@ type Message struct {
 	Subject      string
 	Body         Body
 	ToRecipients []Recipient
-}
-
-// # read private credentials from text file
-func getCreds(filepath string) (string, string, error) {
-	var err error
-	var id, secret string
-	file, err := os.Open(filepath)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-	scanner := bufio.NewScanner(file)
-	if scanner.Scan() {
-		id = scanner.Text()
-	}
-	if scanner.Scan() {
-		secret = scanner.Text()
-	}
-	if id[0] == '*' || secret[0] == '*' {
-		err := errors.New("Missing Configuration: _PRIVATE.txt needs to be edited to add client ID and secret")
-		return "", "", err
-	}
-	return id, secret, err
 }
 
 func getContacts(w http.ResponseWriter, r *http.Request) {
@@ -384,7 +361,7 @@ func main() {
 	var err error
 	configFile := "private.txt"
 	//templateFolder := "templates/"
-	clientID, clientSecret, err = getCreds(configFile)
+	clientID, clientSecret, err = o365.GetCreds(configFile)
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
