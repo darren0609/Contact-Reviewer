@@ -1,12 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Office 365 API - Contacts - Example</title>
+  <title>Edit Contact - Office 365 API</title>
   <!-- Latest compiled and minified CSS -->
   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
-  <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
-
-  <!-- Optional theme -->
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
 </head>
 <body>
@@ -21,7 +18,6 @@
           <li class="nav-item" id='inbox-nav'><a class="nav-link" href="/home">Inbox</a></li>
           <li class="nav-item" id='calendar-nav'><a class="nav-link disabled" href="/events">Calendar</a></li>-->
           <li class="nav-item" id='contacts-nav'><a class="nav-link" href="/home">Contact Listing</a></li>
-          
         </ul>
       </div>
       </div>
@@ -43,6 +39,8 @@
 </form>-->
 <br><br>
   <div class="table-responsive pull-center" style="width:100%;">
+      
+  
     <table width="100%" class="table table-striped table-bordered table-hover">
         <thead>
           <tr class="info">
@@ -55,13 +53,13 @@
           <th >Action</th>
           </tr>
         </thead>
-          <tbody id="contact-listing">
-          </tbody>
+          <tbody id="contact-listing"></tbody>
+          <tbody id="view-page"></tbody>
       </table>
     </div>
     </div>
 </div>    
-<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.4.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script type="text/javascript">
 
   function showViewPage() {

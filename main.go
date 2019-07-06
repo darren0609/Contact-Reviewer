@@ -11,7 +11,7 @@ import (
 	"os"
 	"time"
 
-	"github.com/darren0609/Contact-Reviewer/o365"
+	"o365"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
@@ -196,6 +196,9 @@ func getPerson(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
+	formatDisplay := "Full Name: " + fullcont.Givenname + " " + fullcont.Surname + "\n Address: " + fullcont.Businessaddress.Street + ", " + fullcont.Businessaddress.City
+	log.Printf(formatDisplay)
+
 	err = t2.Execute(w, D{
 		"me":          user,
 		"contact":     fullcont,
@@ -262,7 +265,7 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 	// - Only first 10 results returned
 	// - Only return the GivenName, Surname, and EmailAddresses fields
 	// - Sort the results by the GivenName field in ascending order
-	//query_parameters := "$top=50",
+	//  query_parameters := "$top=50",
 	//	"$select" : "givenName,surname,emailAddresses",
 	//	"$orderby": "givenName ASC",
 	//}
@@ -284,7 +287,7 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 
 	if r.FormValue("search") != "" {
 		endpointURL = endpointURL + "?$search=" + r.FormValue("search")
-		log.Println("Search value set: ", r.FormValue("search"))
+		log.Println("[INSIDE SEARCH] Search value set: ", r.FormValue("search"))
 	}
 
 	if r.FormValue("sortBy") != "" {
