@@ -7,8 +7,8 @@ import (
 	"os"
 )
 
-// getCreds - will read private credentials from text file and return them for use later within the routers.
-func getCreds(filepath string) (string, string, error) {
+// GetCreds - will read private credentials from text file and return them for use later within the routers.
+func GetCreds(filepath string) (string, string, error) {
 	var err error
 	var id, secret string
 	file, err := os.Open(filepath)
