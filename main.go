@@ -11,7 +11,7 @@ import (
 	"os"
 	"time"
 
-	"o365"
+	"github.com/darren0609/Contact-Reviewer/o365"
 
 	"github.com/google/uuid"
 	"github.com/gorilla/mux"
