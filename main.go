@@ -160,6 +160,7 @@ func loginHandler(w http.ResponseWriter, r *http.Request) {
 
 func getPerson(w http.ResponseWriter, r *http.Request) {
 	var fullcont ContactData
+	// var results ContactData
 	time1 := time.Now()
 	params := mux.Vars(r)
 
@@ -171,16 +172,21 @@ func getPerson(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	endpointURL := "https://graph.microsoft.com/v1.0/me/contacts/" + params["id"]
+	endpointURL := "https://graph.microsoft.com/v1.0/me/contacts"
 
-	results, err := client.Get(endpointURL)
+	if params["id"] != "" {
+		endpointURL = endpointURL + "/" + params["id"]
+		log.Println("getPersonID: ", params["id"])
+	}
+
+	res, err := client.Get(endpointURL)
 	if err != nil {
 		fmt.Println("Error in get contacts:", err)
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
-	defer results.Body.Close()
+	defer res.Body.Close()
 
-	bytes, err := ioutil.ReadAll(results.Body)
+	bytes, err := ioutil.ReadAll(res.Body)
 	if err != nil {
 		panic(err)
 	}
@@ -191,22 +197,8 @@ func getPerson(w http.ResponseWriter, r *http.Request) {
 	}
 
 	// Parse template for response to app client
-	t2, err := template.ParseFiles("tpl/contact_edit.html")
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-	}
-
-	formatDisplay := "Full Name: " + fullcont.Givenname + " " + fullcont.Surname + "\n Address: " + fullcont.Businessaddress.Street + ", " + fullcont.Businessaddress.City
-	log.Printf(formatDisplay)
-
-	err = t2.Execute(w, D{
-		"me":          user,
-		"contact":     fullcont,
-		"showSuccess": false,
-		"showError":   false,
-	})
-
-	if err != nil {
+	encoder := json.NewEncoder(w)
+	if err := encoder.Encode(fullcont); err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 	}
 
@@ -244,6 +236,7 @@ func main() {
 	r.HandleFunc("/home", homeHandler)
 	r.HandleFunc("/contacts", getContacts).Methods("GET")
 	r.HandleFunc("/contacts/{id}", getPerson).Methods("GET")
+	// r.HandleFunc("/contacts/{id}", getContacts).Methods("GET")
 	r.HandleFunc("/contacts/{id}", deletePerson).Methods("DELETE")
 	r.HandleFunc("/contacts/{id}", createPerson).Methods("POST")
 	log.Fatal(http.ListenAndServe(":8080", r))
@@ -287,7 +280,7 @@ func getContacts(w http.ResponseWriter, r *http.Request) {
 
 	if r.FormValue("search") != "" {
 		endpointURL = endpointURL + "?$search=" + r.FormValue("search")
-		log.Println("[INSIDE SEARCH] Search value set: ", r.FormValue("search"))
+		log.Println("Search value set: ", r.FormValue("search"))
 	}
 
 	if r.FormValue("sortBy") != "" {

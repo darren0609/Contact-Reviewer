@@ -44,17 +44,18 @@
 <br><br>
   <div class="table-responsive pull-center" style="width:100%;">
     <table width="100%" class="table table-striped table-bordered table-hover">
-        <thead>
-          <tr class="info">
-          <th onclick="sortContacts('givenName')">First Name</th>
-          <th onclick="sortContacts('surname')">Second Name</th>
-          <th>Email Address(es)</th>
-          <th>Work Phone</th>
-          <th>Mobile Phone</th>
-          <th>Home Phone</th>
-          <th >Action</th>
-          </tr>
-        </thead>
+      <thead>
+        <tr class="info">
+        <th onclick="sortContacts('givenName')">First Name</th>
+        <th onclick="sortContacts('surname')">Second Name</th>
+        <th>Email Address(es)</th>
+        <th>Work Phone</th>
+        <th>Mobile Phone</th>
+        <th>Home Phone</th>
+        <th >Action</th>
+        <th onclick="showViewPage()"><button type="button" class="btn btn-outline-dark">Contact</button></th>
+        </tr>
+      </thead>
           <tbody id="contact-listing">
           </tbody>
       </table>
@@ -72,6 +73,25 @@
         $("#contact-listing").show()
         $("#view-page").hide()
       }
+
+      function getPerson(personId) {
+        $.ajax({
+          url: "/contacts/" + personId, 
+          method: "GET",
+          data: $("#search-form").serialize(),
+          success: function(rawData) {
+            var parsed = JSON.parse(rawData);
+            if (!parsed) return;
+            
+            var contactListing = $("#contact-listing");
+            contactListing.empty();
+
+            appendContact(contactListing, parsed);
+          }
+         });
+        return false;
+      }
+      
       function submitSearch() {
         $.ajax({
           url: "/contacts",
@@ -130,7 +150,7 @@
        }
   
      }
-    var row = $("<tr><td>" + contact.givenName + "</td><td>" + contact.surname + "</td><td>" + emailcheck + "</td><td>" + contact.businessPhones + "</td><td>" + contact.mobilePhone +"</td><td>" + contact.homePhones + "<td align=\"center\"><a href=\"../contacts/" + contact.id + "\" class=\"btn btn-default btn-xs\" data-toggle=\"modal\" data-target=\".modal1\">Edit</a></td></tr>");
+    var row = $("<tr><td>" + contact.givenName + "</td><td>" + contact.surname + "</td><td>" + emailcheck + "</td><td>" + contact.businessPhones + "</td><td>" + contact.mobilePhone +"</td><td>" + contact.homePhones + "<td onclick=getPerson('" + contact.id + "')><button class=\"btn btn-default btn-xs\" data-toggle=\"modal\" data-target=\".modal1\">Edit</button></td></tr>");
     contactListing.append(row)
   }
 

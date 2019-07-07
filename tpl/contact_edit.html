@@ -42,7 +42,7 @@
       
   
     <table width="100%" class="table table-striped table-bordered table-hover">
-        <thead>
+        <thead id="contact-listing">
           <tr class="info">
           <th onclick="sortContacts('givenName')">First Name</th>
           <th onclick="sortContacts('surname')">Second Name</th>
@@ -51,6 +51,19 @@
           <th>Mobile Phone</th>
           <th>Home Phone</th>
           <th >Action</th>
+          <th onclick="showViewPage()"><button type="button" class="btn btn-outline-dark">Contact</button></th>
+          </tr>
+        </thead>
+        <thead id="view-page">
+          <tr class="info">
+          <th>First Name</th>
+          <th>Second Name</th>
+          <th>Email Address(es)</th>
+          <th>Work Phone</th>
+          <th>Mobile Phone</th>
+          <th>Home Phone</th>
+          <th>Edit/Delete</th>
+          <th onclick="showSearchPage()"><button type="button" class="btn btn-outline-dark">Search</button></th>
           </tr>
         </thead>
           <tbody id="contact-listing"></tbody>
@@ -61,6 +74,8 @@
 </div>    
 <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
 <script type="text/javascript">
+
+  $( document ).ready(showViewPage)
 
   function showViewPage() {
         $("#contact-listing").hide()
