@@ -6,3 +6,4 @@ connect_go.orig
 init/private.txt
 .gitignore
 credentials.json
+*.code-workspace
